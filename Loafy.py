@@ -1,17 +1,18 @@
 import discord
 import random
 import asyncio
+import time
 import emojis
 import private
 import specialbutter
 from discord.ext import commands
+from discord import app_commands
 from data import loadbutter, savebutter
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='^', intents=intents)
 
-owner_id = 1170381506460536905
 user_butter = loadbutter()
 
 async def check_roles(guild):
@@ -30,10 +31,17 @@ async def check_roles(guild):
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user.name}')
+    print(f'Logged in as {bot.user.name}\n')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="butter"))
+
+    print('slash commands syncing...')
+    await bot.tree.sync(guild=private.guild_id)
+    print('slash commands synced.\n')
+
+    print('roles syncing...')
     for guild in bot.guilds:
         await check_roles(guild)
+    print('roles synced.')
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -102,7 +110,8 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-@bot.command(brief="get jam'd >:3", help="times you out for 1 minute")
+@bot.hybrid_command(brief="get jam'd >:3", help="times you out for 1 minute")
+@app_commands.guilds(private.guild_id)
 async def jam(ctx):
     Jam_role = discord.utils.get(ctx.guild.roles, name="Jam'd")
     await ctx.author.add_roles(Jam_role)
@@ -111,16 +120,19 @@ async def jam(ctx):
     await asyncio.sleep(60)
     await ctx.author.remove_roles(Jam_role)
 
-@bot.command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
+@bot.hybrid_command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
+@app_commands.guilds(private.guild_id)
 async def purpl(ctx):
     purpl = discord.utils.get(ctx.guild.roles, name="purpl")
     if random.randint(1, 20) == 1:
         await ctx.author.add_roles(purpl)
         await ctx.reply("`added role 'purpl'`")
     else:
+        await ctx.defer(ephemeral=True)
         await ctx.reply('you didnt get the purpl role :(')
 
-@bot.group(invoke_without_command=True, brief="🧈")
+@bot.hybrid_group(invoke_without_command=True, brief="🧈")
+@app_commands.guilds(private.guild_id)
 async def butter(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.reply('🧈')
