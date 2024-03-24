@@ -1,12 +1,10 @@
 import discord
 import random
 import asyncio
-import time
 import emojis
 import private
 import specialbutter
 from discord.ext import commands
-from discord import app_commands
 from data import loadbutter, savebutter
 
 intents = discord.Intents.default()
@@ -35,7 +33,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="butter"))
 
     print('slash commands syncing...')
-    await bot.tree.sync(guild=private.guild_id)
+    await bot.tree.sync()
     print('slash commands synced.\n')
 
     print('roles syncing...')
@@ -111,7 +109,6 @@ async def on_message(message):
     await bot.process_commands(message)
 
 @bot.hybrid_command(brief="get jam'd >:3", help="times you out for 1 minute")
-@app_commands.guilds(private.guild_id)
 async def jam(ctx):
     Jam_role = discord.utils.get(ctx.guild.roles, name="Jam'd")
     await ctx.author.add_roles(Jam_role)
@@ -121,7 +118,6 @@ async def jam(ctx):
     await ctx.author.remove_roles(Jam_role)
 
 @bot.hybrid_command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
-@app_commands.guilds(private.guild_id)
 async def purpl(ctx):
     purpl = discord.utils.get(ctx.guild.roles, name="purpl")
     if random.randint(1, 20) == 1:
@@ -132,7 +128,6 @@ async def purpl(ctx):
         await ctx.reply('you didnt get the purpl role :(')
 
 @bot.hybrid_group(invoke_without_command=True, brief="🧈")
-@app_commands.guilds(private.guild_id)
 async def butter(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.reply('🧈')
