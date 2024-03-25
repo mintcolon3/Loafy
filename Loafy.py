@@ -68,7 +68,7 @@ async def on_message(message):
         user_id = str(message.author.id)
         user_butter.setdefault(user_id, [0, 0, 0])
         Jam_role = discord.utils.get(message.guild.roles, name="Jam'd")
-        butter = random.choices([1, 2, 3], weights = [100, 10*(user_butter[user_id][2]+1), 1*(user_butter[user_id][2]+1)])
+        butter = random.choices([1, 2, 3], weights = [100, 10*(user_butter[user_id][2]+1), 5/(user_butter[user_id][2]+1)])
         if random.randint(1, 20) == 1:
             await message.author.add_roles(Jam_role)
             await message.add_reaction(emojis.jam)
@@ -136,27 +136,36 @@ async def butter(ctx):
 async def stats(ctx, user: discord.User = commands.parameter(default=None, description="(optional)")):
     if user:
         user_id = str(user.id)
+        title = f"butter stats for `{user.display_name}`"
     else:
         user_id = str(ctx.author.id)
+        title = f"**butter stats for `{ctx.author.display_name}`**\n"
     if user_id in specialbutter.specialbutter.keys():
         butter = specialbutter.specialbutter[user_id]
     else:
         butter = user_butter.get(user_id, [0, 0, 0])
-    output = f"{emojis.butter} - {butter[0]}\n"
-    output += f"{emojis.butter2} - {butter[1]}\n"
-    output += f"{emojis.exotic} - {butter[2]}\n"
-    await ctx.reply(output)
+    
+    description = f"{emojis.butter} - {butter[0]}\n"
+    description += f"{emojis.butter2} - {butter[1]}\n"
+    description += f"{emojis.exotic} - {butter[2]}\n\n"
+    description += f"total butter - {butter[0] + butter[1] + butter[2]}"
+
+    await ctx.reply(embed=discord.Embed(title=title, description=description, color=0x5865F2))
 
 @butter.command(brief="check your chances of butters")
 async def chance(ctx, user: discord.User = commands.parameter(default=None, description="(optional)")):
     if user:
         user_id = str(user.id)
+        title = f"**butter chance for `{user.display_name}`**\n"
     else:
         user_id = str(ctx.author.id)
-    weights = [100, 10*(user_butter[user_id][2]+1), 1*(user_butter[user_id][2]+1)]
-    output = f"{emojis.butter} - {round(((weights[0]/sum(weights))*100), 2):.2f}%\n"
-    output += f"{emojis.butter2} - {round(((weights[1]/sum(weights))*100), 2):.2f}%\n"
-    output += f"{emojis.exotic} - {round(((weights[2]/sum(weights))*100), 2):.2f}%"
-    await ctx.reply(output)
+        title = f"**butter chance for `{ctx.author.display_name}`**\n"
+    
+    weights = [100, 10*(user_butter[user_id][2]+1), 5/(user_butter[user_id][2]+1)]
+    description = f"{emojis.butter} - {round(((weights[0]/sum(weights))*100), 2):.2f}%\n"
+    description += f"{emojis.butter2} - {round(((weights[1]/sum(weights))*100), 2):.2f}%\n"
+    description += f"{emojis.exotic} - {round(((weights[2]/sum(weights))*100), 2):.2f}%"
+
+    await ctx.reply(embed=discord.Embed(title=title, description=description, color=0x5865F2))
 
 bot.run(private.TOKEN)
