@@ -1,11 +1,11 @@
 import discord
 import random
-import asyncio
 import emojis
 import private
 import specialbutter
+import butter as butter_commands
 from discord.ext import commands
-from data import loadbutter, savebutter
+from data import loadbutter
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -20,7 +20,7 @@ async def check_roles(guild):
         perms = discord.Permissions(send_messages=False, send_messages_in_threads=False, add_reactions=False)
         Jam_role = await guild.create_role(name="Jam'd", colour=colour, permissions=perms)
     for channel in guild.text_channels:
-        await channel.set_permissions(Jam_role, send_messages=False, send_messages_in_threads=False, add_reactions=False)
+        await channel.set_permissions(Jam_role, send_messages=False, send_messages_in_threads=False, add_reactions=False, create_public_threads=False, create_private_threads=False)
 
     purpl = discord.utils.get(guild.roles, name="purpl")
     if not purpl:
@@ -31,10 +31,6 @@ async def check_roles(guild):
 async def on_ready():
     print(f'Logged in as {bot.user.name}\n')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="butter"))
-
-    print('slash commands syncing...')
-    await bot.tree.sync()
-    print('slash commands synced.\n')
 
     print('roles syncing...')
     for guild in bot.guilds:
@@ -63,74 +59,53 @@ async def on_message(message):
         return
     content = message.content.lower()
 
-    if content == '🧈':
-        global user_butter
-        user_id = str(message.author.id)
-        user_butter.setdefault(user_id, [0, 0, 0])
-        Jam_role = discord.utils.get(message.guild.roles, name="Jam'd")
-        butter = random.choices([1, 2, 3], weights = [100, 10*(user_butter[user_id][2]+1), 5/(user_butter[user_id][2]+1)])
-        if random.randint(1, 20) == 1:
-            await message.author.add_roles(Jam_role)
-            await message.add_reaction(emojis.jam)
-            await message.reply('you got a jam. >:(')
-            await asyncio.sleep(60)
-            await message.author.remove_roles(Jam_role)
-        elif butter == [3]:
-            user_butter[user_id][2] += 1
-            exotic_butter = random.choice(emojis.exotic_all)
-            await message.add_reaction(exotic_butter)
-            await message.reply(f'you got the exotic butter {exotic_butter}!\nyour exotic butter count is `{user_butter[user_id][2]}`.')
-        elif butter == [2]:
-            user_butter[user_id][1] += 1
-            await message.add_reaction(emojis.butter2)
-            await message.reply('you got the special butter!')
-        elif butter == [1]:
-            user_butter[user_id][0] += 1
-            await message.add_reaction(emojis.butter)
-        savebutter(user_butter)
+    if message.content.startswith('!^ ') and message.author.id == private.owner_id:
+        await message.delete()
+        await message.channel.send(message.content.replace('!^ ', ''))
 
-    if 'butter' in content:
-        if '^' not in content:
-            replies = [
-                'Holy shit! Is that a motherfucking 🧈 reference???',
-                'Holy shit! Is that a motherfucking butter reference???',
-                'https://media.discordapp.net/attachments/1217504702023991399/1217510803561910415/clickbait_butter.png?ex=66044a4b&is=65f1d54b&hm=a82863a6922f96f18ec039282d56f32ea357aa6e7edfe72a7339f09afa313c03&=&format=webp&quality=lossless&width=606&height=606',
-                '🗣️🧈🧈🧈',
-                'BUTTER IN THE HOLE!!!',
-                'google butter'
-            ]
-            await message.reply(random.choice(replies))
+    if content == '🧈':
+        await butter_commands.butter(message)
+
+    if 'butter' in content and '^' not in content:
+        replies = [
+            'Holy shit! Is that a motherfucking 🧈 reference???',
+            'Holy shit! Is that a motherfucking butter reference???',
+            'https://media.discordapp.net/attachments/1217504702023991399/1217510803561910415/clickbait_butter.png?ex=66044a4b&is=65f1d54b&hm=a82863a6922f96f18ec039282d56f32ea357aa6e7edfe72a7339f09afa313c03&=&format=webp&quality=lossless&width=606&height=606',
+            '🗣️🧈🧈🧈',
+            'BUTTER IN THE HOLE!!!',
+            'google butter',
+            'https://media.discordapp.net/attachments/1223610285961777193/1235861835039768607/gd_butter.png?ex=6635e986&is=66349806&hm=e305c16c9a845d683fb4f48a03da0141ad11cdf50ea7a9f81529f339b385bf1d&=&format=webp&quality=lossless&width=1067&height=600',
+            'oi butter',
+            '<:butter_thinkies:1235864286182510643>',
+            'buttercorrect oops',
+            '<:butter_boop:1235867997353279499>'
+        ]
+        await message.reply(random.choice(replies))
 
     if content == "what's the bot deserving of the highest place on bread lb":
         await message.reply("The bot deserving of the highest place on bread lb is Loafy, the butter-loving bot.")
         if random.randint(1, 5) == 1:
-            await message.reply(':0 loafy lore')
+            await message.channel.send(':0 loafy lore')
 
     await bot.process_commands(message)
 
-@bot.hybrid_command(brief="get jam'd >:3", help="times you out for 1 minute")
-async def jam(ctx):
-    Jam_role = discord.utils.get(ctx.guild.roles, name="Jam'd")
-    await ctx.author.add_roles(Jam_role)
-    await ctx.reply(emojis.jam)
-    await ctx.send('you got a jam. >:(')
-    await asyncio.sleep(60)
-    await ctx.author.remove_roles(Jam_role)
+@bot.command(brief="get jam'd >:3", help="times you out for 1 minute")
+async def jam(ctx, user: discord.User = None, time: int = 1):
+    await butter_commands.jam(ctx.message, user, time)
 
-@bot.hybrid_command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
+@bot.command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
 async def purpl(ctx):
     purpl = discord.utils.get(ctx.guild.roles, name="purpl")
     if random.randint(1, 20) == 1:
         await ctx.author.add_roles(purpl)
         await ctx.reply("`added role 'purpl'`")
     else:
-        await ctx.defer(ephemeral=True)
         await ctx.reply('you didnt get the purpl role :(')
 
-@bot.hybrid_group(invoke_without_command=True, brief="🧈")
+@bot.group(invoke_without_command=True, brief="🧈")
 async def butter(ctx):
     if ctx.invoked_subcommand is None:
-        await ctx.reply('🧈')
+        await butter_commands.butter(ctx.message)
 
 @butter.command(brief="view your butter stats")
 async def stats(ctx, user: discord.User = commands.parameter(default=None, description="(optional)")):
