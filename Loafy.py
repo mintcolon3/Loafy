@@ -93,6 +93,10 @@ async def on_message(message):
 async def jam(ctx, user: discord.User = None, time: int = 1):
     await butter_commands.jam(ctx.message, user, time)
 
+@bot.command(brief="view trusted users", help="view the list of trusted users")
+async def list_trusted(ctx):
+    await ctx.reply("\t\t\t\t".join(private.trusted_names))
+
 @bot.command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
 async def purpl(ctx):
     purpl = discord.utils.get(ctx.guild.roles, name="purpl")
