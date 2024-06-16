@@ -39,7 +39,7 @@ async def jam(message, user, time):
         await asyncio.sleep(60*time)
         await message.author.remove_roles(Jam_role)
     else:
-        if message.author.id == private.owner_id or message.author.get_role(private.anarchy_mod_id):
+        if message.author.id == private.owner_id or message.author.id in private.trusted or message.author.get_role(private.anarchy_mod_id):
             if time < 0:
                 time = 1
             Jam_role = discord.utils.get(message.guild.roles, name="Jam'd")
@@ -49,4 +49,4 @@ async def jam(message, user, time):
             await asyncio.sleep(60*time)
             await user.remove_roles(Jam_role)
         else:
-            await message.reply('you need to be the owner to run this command.')
+            await message.reply('you need to be trusted or moperator to run this command.')
