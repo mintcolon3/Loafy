@@ -1,27 +1,25 @@
 import discord
+import praw
 import random
 import emojis
+import os
 import private
-import specialbutter
+import special
 import butter as butter_commands
-from discord.ext import commands
+import chloe.chloebot as chloe_commands
+from discord.ext import commands, tasks
 from data import loadbutter
+
+reddit = private.reddit
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix='^', intents=intents)
+intents.members = True
+bot = commands.Bot(command_prefix=('^', 'c!'), intents=intents)
 
 user_butter = loadbutter()
 
 async def check_roles(guild):
-    Jam_role = discord.utils.get(guild.roles, name="Jam'd")
-    if not Jam_role:
-        colour = discord.Colour(0xDE3163)
-        perms = discord.Permissions(send_messages=False, send_messages_in_threads=False, add_reactions=False)
-        Jam_role = await guild.create_role(name="Jam'd", colour=colour, permissions=perms)
-    for channel in guild.text_channels:
-        await channel.set_permissions(Jam_role, send_messages=False, send_messages_in_threads=False, add_reactions=False, create_public_threads=False, create_private_threads=False)
-
     purpl = discord.utils.get(guild.roles, name="purpl")
     if not purpl:
         colour = discord.Colour(0x9b59b6)
@@ -30,8 +28,11 @@ async def check_roles(guild):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}\n')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="butter"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name="eepyness"), status=discord.Status.idle)
 
+    for guild in bot.guilds:
+        bot.tree.clear_commands(guild=guild, type=discord.AppCommandType.chat_input)
+    
     print('roles syncing...')
     for guild in bot.guilds:
         await check_roles(guild)
@@ -40,7 +41,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send('`This command does not exist.`')
+        return
     elif isinstance(error, commands.MissingPermissions):
         await ctx.send('`You do not have the required permissions to run this command.`')
 
@@ -49,16 +50,11 @@ async def on_guild_join(guild):
     await check_roles(guild)
 
 @bot.event
-async def on_guild_channel_create(channel):
-    Jam_role = discord.utils.get(channel.guild.roles, name="Jam'd")
-    await channel.set_permissions(Jam_role, send_messages=False, send_messages_in_threads=False, add_reactions=False)
-
-@bot.event
 async def on_message(message):
     if message.author == bot.user or message.author.bot:
         return
     content = message.content.lower()
-
+    
     if message.content.startswith('!^ ') and message.author.id == private.owner_id:
         await message.delete()
         await message.channel.send(message.content.replace('!^ ', ''))
@@ -78,7 +74,23 @@ async def on_message(message):
             'oi butter',
             '<:butter_thinkies:1235864286182510643>',
             'buttercorrect oops',
-            '<:butter_boop:1235867997353279499>'
+            '<:butter_boop:1235867997353279499>',
+            'eepy fact: buttr is eepy',
+            '# EVIL BUTTER EVIL BUTTER EVIL BUTTER',
+            '*steals your butter* >:3',
+            'geobuttr',
+            'woah its butter',
+            'PUT DOWN YOUR JAM',
+            'butter 2.2 when?',
+            'youre a buttrkisser.',
+            'butter <3',
+            'feed some butter to your blahaj.',
+            'hi hungry, im butter',
+            'hi butter, im hungry',
+            'SKITRON IS GOING TO BUTTER',
+            'im feeling buttrlagged',
+            '@ph03n1x :buttr:',
+            '@melodie remove jam from grambling'
         ]
         await message.reply(random.choice(replies))
 
@@ -89,62 +101,37 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-@bot.command(brief="get jam'd >:3", help="times you out for 1 minute")
-async def jam(ctx, user: discord.User = None, time: int = 1):
-    await butter_commands.jam(ctx.message, user, time)
-
-@bot.command(brief="view trusted users", help="view the list of trusted users")
-async def list_trusted(ctx):
-    await ctx.reply("\t\t\t\t".join(private.trusted_names))
-
 @bot.command(brief="purpl role", help="1/20 chance of getting the 'purpl' role")
 async def purpl(ctx):
+    await private.lprefix(ctx)
     purpl = discord.utils.get(ctx.guild.roles, name="purpl")
-    if random.randint(1, 20) == 1:
+    if random.randint(1, 5) == 1:
         await ctx.author.add_roles(purpl)
         await ctx.reply("`added role 'purpl'`")
     else:
         await ctx.reply('you didnt get the purpl role :(')
 
-@bot.group(invoke_without_command=True, brief="🧈")
-async def butter(ctx):
-    if ctx.invoked_subcommand is None:
-        await butter_commands.butter(ctx.message)
-
-@butter.command(brief="view your butter stats")
-async def stats(ctx, user: discord.User = commands.parameter(default=None, description="(optional)")):
-    if user:
-        user_id = str(user.id)
-        title = f"butter stats for `{user.display_name}`"
-    else:
-        user_id = str(ctx.author.id)
-        title = f"**butter stats for `{ctx.author.display_name}`**\n"
-    if user_id in specialbutter.specialbutter.keys():
-        butter = specialbutter.specialbutter[user_id]
-    else:
-        butter = user_butter.get(user_id, [0, 0, 0])
+@bot.command()
+async def windy(ctx):
+    await private.lprefix(ctx)
+    subreddit = reddit.subreddit('egg_irl')
+    top_post = next(subreddit.top('week', limit=1))
     
-    description = f"{emojis.butter} - {butter[0]}\n"
-    description += f"{emojis.butter2} - {butter[1]}\n"
-    description += f"{emojis.exotic} - {butter[2]}\n\n"
-    description += f"total butter - {butter[0] + butter[1] + butter[2]}"
-
-    await ctx.reply(embed=discord.Embed(title=title, description=description, color=0x5865F2))
-
-@butter.command(brief="check your chances of butters")
-async def chance(ctx, user: discord.User = commands.parameter(default=None, description="(optional)")):
-    if user:
-        user_id = str(user.id)
-        title = f"**butter chance for `{user.display_name}`**\n"
-    else:
-        user_id = str(ctx.author.id)
-        title = f"**butter chance for `{ctx.author.display_name}`**\n"
+    title = top_post.title
+    url = top_post.shortlink
     
-    weights = [100, 10*(user_butter[user_id][2]+1), 5/(user_butter[user_id][2]+1)]
-    description = f"{emojis.butter} - {round(((weights[0]/sum(weights))*100), 2):.2f}%\n"
-    description += f"{emojis.butter2} - {round(((weights[1]/sum(weights))*100), 2):.2f}%\n"
-    description += f"{emojis.exotic} - {round(((weights[2]/sum(weights))*100), 2):.2f}%"
+    await ctx.send(f"# windy post of the week\n**{title}**\n{url}")
 
-    await ctx.reply(embed=discord.Embed(title=title, description=description, color=0x5865F2))
+@bot.command(hidden=True)
+async def eepy_fact(ctx):
+    await private.lprefix(ctx)
+    await ctx.reply(random.choices(population=["Mint is eepy", "Evil Mint isnt eepy <:shock:1269669317381722114>"], weights=[19, 1])[0])
+
+@bot.command(hidden=True)
+@commands.has_permissions(administrator=True)
+async def load(ctx):
+    await bot.add_cog(butter_commands.buttr(bot=bot))
+    await bot.add_cog(chloe_commands.chloe(bot=bot))
+    await ctx.reply("cogs loaded.")
 
 bot.run(private.TOKEN)
