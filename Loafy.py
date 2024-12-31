@@ -125,7 +125,7 @@ async def windy(ctx):
 @bot.command(hidden=True)
 async def eepy_fact(ctx):
     await private.lprefix(ctx)
-    await ctx.reply(random.choices(population=["Mint is eepy", "Evil Mint isnt eepy <:shock:1269669317381722114>"], weights=[19, 1])[0])
+    await ctx.reply(random.choices(population=["Mint is eepy", "Mint is eepy\nBut clo clo eepy tooooo", "Evil Mint isnt eepy <:shock:1269669317381722114>"], weights=[12, 7, 1])[0])
 
 @bot.command(hidden=True)
 @commands.has_permissions(administrator=True)
