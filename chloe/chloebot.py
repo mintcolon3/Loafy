@@ -31,6 +31,9 @@ async def daily(self, reason):
             user_kirbo[key][1] = 7 * (10 + user_kirbo[key][2])
     save(user_kirbo)
     await printlog(self, input=f"\nstored kirbo rolls have increased\nreason: {reason}\n")
+    channel = discord.utils.get(self.bot.get_all_channels(), id=1254482628917203127)
+    await channel.send("<@&1323571811266461716>\nDaily rolls have been reset.")
+
 
 class chloe(commands.Cog):
     def __init__(self, bot):
