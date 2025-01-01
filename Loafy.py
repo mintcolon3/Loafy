@@ -28,7 +28,7 @@ async def check_roles(guild):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}\n')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name="eepyness"), status=discord.Status.idle)
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name="eepyness"), status=discord.Status.online)
 
     for guild in bot.guilds:
         bot.tree.clear_commands(guild=guild, type=discord.AppCommandType.chat_input)
