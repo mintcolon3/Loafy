@@ -4,6 +4,7 @@ import datetime
 import os
 import private
 import json
+import private_commands
 from discord.ext import commands, tasks
 
 async def printlog(self, input):
@@ -21,7 +22,7 @@ def save(data):
         json.dump(data, file, indent=4)
 
 user_kirbo = load()
-time = datetime.time(hour=0, minute=00, tzinfo=datetime.timezone.utc)
+time = datetime.time(hour=23, minute=00, tzinfo=datetime.timezone.utc)
 
 async def daily(self, reason):
     global user_kirbo
@@ -32,6 +33,7 @@ async def daily(self, reason):
     save(user_kirbo)
     await printlog(self, input=f"\nstored kirbo rolls have increased\nreason: {reason}\n")
     channel = discord.utils.get(self.bot.get_all_channels(), id=1254482628917203127)
+    achannel = discord.utils.get(self.bot.get_all_channels(), id=1254105197547094128)
     await channel.send("<@&1323571811266461716>\nDaily rolls have been reset.")
 
 
@@ -40,6 +42,10 @@ class chloe(commands.Cog):
         self.bot = bot
         self.daily_refresh.start()
 
+    # ----------------------------------------------
+    # ----------------- KIRBO GAME -----------------
+    # ----------------------------------------------
+    
     def cog_unload(self):
         self.daily_refresh.cancel()
     
@@ -51,7 +57,7 @@ class chloe(commands.Cog):
 
             reply = "Daily rolls have been reset."
             reply_embed = discord.Embed(description=reply, color=0xffd057)
-            reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+            
             await channel.send(embed=reply_embed)
     
     @commands.group(name="c!kirbo", brief="kirbo", aliases=["kirbo", "killbot"])
@@ -67,14 +73,14 @@ class chloe(commands.Cog):
         if loop <= 0:
             reply = "# <:thinkies_cat:1254100324751249521>"
             reply_embed = discord.Embed(description=reply, color=0xffd057)
-            reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+            
             await ctx.reply(embed=reply_embed)
             os._exit()
 
         if user_kirbo[user_id][1] - loop < 0:
             reply = "That exceeds the amount of daily rolls you have."
             reply_embed = discord.Embed(description=reply, color=0xffd057)
-            reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+            
             await ctx.reply(embed=reply_embed)
             os._exit()
 
@@ -99,7 +105,7 @@ class chloe(commands.Cog):
             totalkirbo += kirbo_roll[count]
             count += 1
         reply_embed = discord.Embed(description=fullreply, color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         await ctx.reply(embed=reply_embed)
         user_kirbo[user_id][0] += totalkirbo
         user_kirbo[user_id][1] += -loop
@@ -109,7 +115,7 @@ class chloe(commands.Cog):
     @kirbo.command(brief="kirbo")
     async def stats(self, ctx, user: discord.User = commands.parameter(default=None, description="(optional)")):
         reply_embed = discord.Embed(color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         if not user:
             user = ctx.author
         kirbo = user_kirbo.get(str(user.id), [0, 20, 0, 0])
@@ -142,7 +148,7 @@ class chloe(commands.Cog):
         **Kirbo converter (*alias: converter*)** - {int(150*(1.5**user_kirbo[user_id][3]))} kirbos ({user_kirbo[user_id][3]}/25)
         Increases your chance of rolling a better kirbo."""
         reply_embed = discord.Embed(description=reply, color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         await ctx.reply(embed=reply_embed)
         os._exit()
 
@@ -164,7 +170,7 @@ class chloe(commands.Cog):
             if user_kirbo[user_id][3] >= 25:
                 reply = "You have max kirbo converters."
                 reply_embed = discord.Embed(description=reply, color=0xffd057)
-                reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+                
                 await ctx.reply(embed=reply_embed)
 
                 os._exit("nya")
@@ -174,7 +180,7 @@ class chloe(commands.Cog):
         if shop[item][0] * amount > user_kirbo[user_id][0]:
             reply = "Looks like you don't have enough kirbos to buy that."
             reply_embed = discord.Embed(description=reply, color=0xffd057)
-            reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+            
             await ctx.reply(embed=reply_embed)
             os._exit()
 
@@ -182,7 +188,7 @@ class chloe(commands.Cog):
         user_kirbo[user_id][shop[item][1]] += amount
         reply = f"You have bought {amount} {shop[item][2]}. You now have {user_kirbo[user_id][shop[item][1]]} of them.\nYou have **{user_kirbo[user_id][0]}** kirbos remaining."
         reply_embed = discord.Embed(description=reply, color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         await ctx.reply(embed=reply_embed)
 
         if item == "extra daily roll":
@@ -192,6 +198,7 @@ class chloe(commands.Cog):
 
     @kirbo.command(name="leaderboard", aliases=["lb"], brief="kirbo")
     async def leaderboard(self, ctx, name: str = "lifetime"):
+        if await private_commands.extra_lb(self.bot, ctx, name) == True: return
         name = name.lower()
 
         leaderboards = {
@@ -208,20 +215,20 @@ class chloe(commands.Cog):
                 roll: maximum daily rolls
                 converter: kirbo converters"""
             reply_embed = discord.Embed(color=0xffd057, description=reply)
-            reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+            
             await ctx.reply(embed=reply_embed)
             os.exit()
 
         sorted_data = sorted(user_kirbo.items(), key=lambda item: item[1][leaderboards[name][0]], reverse=True)
         top = sorted_data[:10]
 
-        reply = ""
+        reply = "0.‎ **kirbo:** ∞\n"
         for x in top:
             user = ctx.guild.get_member(int(x[0]))
             reply += f"{top.index(x)+1}. **{user.display_name if user != None else x[0]}:** {x[1][leaderboards[name][0]] + 10 if name == 'roll' else x[1][leaderboards[name][0]]} \n"
 
         reply_embed = discord.Embed(color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         reply_embed.add_field(name=f"**Leaderboard for {leaderboards[name][1]}**", value=reply)
         await ctx.reply(embed=reply_embed)
     
@@ -229,7 +236,7 @@ class chloe(commands.Cog):
     async def rolls(self, ctx):
         kirbo = user_kirbo.get(str(ctx.author.id), [0, 20, 0, 0])
         reply_embed = discord.Embed(color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         reply_embed.add_field(name="", value=f"You have **{kirbo[1]}** rolls remaining.")
         await ctx.reply(embed=reply_embed)
 
@@ -240,5 +247,5 @@ class chloe(commands.Cog):
         await daily(self, reason=f"reset by {ctx.author.name}")
         reply = "Daily rolls have been reset."
         reply_embed = discord.Embed(description=reply, color=0xffd057)
-        reply_embed.set_author(name="Chloe's bot", icon_url="https://cdn.discordapp.com/avatars/1258789111414788137/18a9318b181469541f2494c12d59bec8.webp?")
+        
         await ctx.reply(embed=reply_embed)

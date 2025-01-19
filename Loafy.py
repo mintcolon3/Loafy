@@ -54,10 +54,23 @@ async def on_message(message):
     if message.author == bot.user or message.author.bot:
         return
     content = message.content.lower()
+
+    if not message.guild:
+        minty = await bot.fetch_user(private.owner_id)
+        await minty.send(f"dm from {message.author}:\n{message.content}")
     
     if message.content.startswith('!^ ') and message.author.id == private.owner_id:
         await message.delete()
-        await message.channel.send(message.content.replace('!^ ', ''))
+        
+        if " -ds " in message.content:
+            split = message.content.split(" -ds ")
+            user = await bot.fetch_user(int(split[1]))
+            await user.send(split[0].replace('!^ ', ''))
+        elif message.reference: 
+            reply_to = await message.channel.fetch_message(message.reference.message_id)
+            if message.content.endswith(' -d'): await reply_to.author.send(message.content.replace('!^ ', '').replace(' -d', ''))
+            else: await reply_to.reply(message.content.replace('!^ ', ''))
+        else: await message.channel.send(message.content.replace('!^ ', ''))
 
     if content == '🧈':
         await butter_commands.butter(message)
@@ -125,7 +138,7 @@ async def windy(ctx):
 @bot.command(hidden=True)
 async def eepy_fact(ctx):
     await private.lprefix(ctx)
-    await ctx.reply(random.choices(population=["Mint is eepy", "Mint is eepy\nBut clo clo eepy tooooo", "Evil Mint isnt eepy <:shock:1269669317381722114>"], weights=[12, 7, 1])[0])
+    await ctx.reply(random.choices(population=["Mint is eepy", "Mint is eepy\nBut clo clo eepy tooooo", "The eepy fact of the day is the official creation of the eepy clan", "Evil Mint isnt eepy <:shock:1269669317381722114>"], weights=[12, 7, 2, 1])[0])
 
 @bot.command(hidden=True)
 @commands.has_permissions(administrator=True)
