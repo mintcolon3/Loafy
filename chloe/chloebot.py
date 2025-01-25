@@ -5,6 +5,7 @@ import os
 import private
 import json
 import private_commands
+import asyncio
 from discord.ext import commands, tasks
 
 async def printlog(self, input):
@@ -113,6 +114,54 @@ class chloe(commands.Cog):
         user_kirbo[user_id][1] += -loop
         user_kirbo[user_id][4] += totalkirbo
         user_kirbo[user_id][5] = items
+        save(user_kirbo)
+    
+    @kirbo.command(brief="kirbo")
+    async def upgrade(self, ctx, item:str = "kirbo"):
+        global user_kirbo
+        user_id = str(ctx.author.id)
+        user_kirbo.setdefault(user_id, [0, 20, 0, 0, 0, [0]*14])
+        ritems = ["kirbo", "green", "pink", "easy", "normal", "hard", "harder", "insane",
+                 "easydemon", "mediumdemon", "harddemon", "insanedemon", "extremedemon", "grandpademon"]
+        values = [1, 3, 5, 8, 10, 12, 14, 16, 25, 35, 50, 70, 100, 500]
+        if item not in ritems:
+            reply = "That item does not exist."
+            reply_embed = discord.Embed(description=reply, color=0xffd057)
+            await ctx.reply(embed=reply_embed)
+            return
+        if user_kirbo[user_id][0] < values[ritems.index(item)]: 
+            reply = "You do not have enough kirbos to upgrade that item."
+            reply_embed = discord.Embed(description=reply, color=0xffd057)
+            await ctx.reply(embed=reply_embed)
+            return
+        if user_kirbo[user_id][5][ritems.index(item)] == 0:
+            reply = "You do not have that item."
+            reply_embed = discord.Embed(description=reply, color=0xffd057)
+            await ctx.reply(embed=reply_embed)
+            return
+        
+        r = f"## attempting to upgrade {item}\n[▢▢▢▢▢▢]"
+        replies = [r, r.replace("▢▢▢▢▢▢", "▣▢▢▢▢▢"), r.replace("▢▢▢▢▢▢", "▣▣▢▢▢▢"), r.replace("▢▢▢▢▢▢", "▣▣▣▢▢▢"),
+                   r.replace("▢▢▢▢▢▢", "▣▣▣▣▢▢"), r.replace("▢▢▢▢▢▢", "▣▣▣▣▣▢"), r.replace("▢", "▣")]
+        reply_embed = discord.Embed(description=replies[0], color=0xffd057)
+        rmessage = await ctx.reply(embed=reply_embed)
+        for i in range(1, 7):
+            await asyncio.sleep(1)
+            reply_embed = discord.Embed(description=replies[i], color=0xffd057)
+            await rmessage.edit(embed=reply_embed)
+        await asyncio.sleep(1)
+        result = random.choices(population=[0, 2, 3], weights=[40, 9, 1])[0]
+        if result == 0: reply = "Upgrade failed, you lost your item."
+        elif result == 2: reply = "You upgraded your item to silver quality!"
+        elif result == 3: reply = "You upgraded your item to gold quality!"
+        reply_embed = discord.Embed(description=f"attempting to upgrade {item}\n[▣▣▣▣▣▣]\n\n{reply}", color=0xffd057)
+        await rmessage.edit(embed=reply_embed)
+
+        user_kirbo[user_id][0] += -values[ritems.index(item)]
+        user_kirbo[user_id][0] += values[ritems.index(item)] * result
+        if result != 0: user_kirbo[user_id][4] += values[ritems.index(item)] * (result-1)
+        user_kirbo[user_id][5][ritems.index(item)] += -1
+        user_kirbo[user_id][5][ritems.index(item)] += result
         save(user_kirbo)
         
     @kirbo.command(brief="kirbo")

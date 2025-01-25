@@ -113,6 +113,10 @@ async def on_message(message):
         await message.reply("The bot deserving of the highest place on bread lb is Loafy, the butter-loving bot.")
         if random.randint(1, 5) == 1:
             await message.channel.send(':0 loafy lore')
+    
+    if message.channel.id == 1216797203557781514 and random.randint(1, 20) == 1:
+        await message.add_reaction("<:meow_boop:1264461237597638758>")
+
 
     await bot.process_commands(message)
 
