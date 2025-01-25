@@ -103,7 +103,9 @@ async def on_message(message):
             'SKITRON IS GOING TO BUTTER',
             'im feeling buttrlagged',
             '@ph03n1x :buttr:',
-            '@melodie remove jam from grambling'
+            '@melodie remove jam from grambling',
+            'butter butter go r/buttr',
+            "Sorry, butter is not available right now\nA law banning butter has been enacted in the U.S. Unfortunately, that means you can't use butter right now.\nWe are fortunate that minty has indicated that she will work with us for a solution to reinstate butter once she takes office. Please stay tuned!"
         ]
         await message.reply(random.choice(replies))
 
