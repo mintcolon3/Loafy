@@ -12,3 +12,25 @@ exotic_pink = '<:Loafy_exotic_butter_pink:1215698278033924188>'
 exotic_all = [exotic_red, exotic_orange, exotic_yellow, exotic_green, exotic_blue, exotic_purple, exotic_pink]
 
 jam = '<:Loafy_jam:1215723288525938748>'
+
+
+# KIRBO GAME
+
+item_emojis = ['<:kirbo:1314946641836511355>', '<:kirbo_green:1314946640410574899>', '<:kirbo_pink:1314946638749634563>',
+            '<:Easy:1314949853838577725>', '<:Normal:1314949896150716447>', '<:Hard:1314949924412194816>',
+            '<:Harder:1314949962576039978>', '<:Insane:1314950004309491773>', '<:EasyDemon:1314950046445342800>',
+            '<:MediumDemon:1314950112132206684>', '<:HardDemon:1314950166415147069>', '<:InsaneDemon:1314950220634656918>',
+            '<:ExtremeDemon:1314950243728621649>', '<:GrandpaDemon:1314950272887554069>']
+silver_item_emojis = ["<:silverkirbo:1340997260397379644>", "<:silverkirbo_green:1340997273399857233>", "<:silverkirbo_pink:1340997285764530206>", "<:silverEasy:1340997300209586229>",
+                    "<:silverNormal:1340997320149569566>", "<:silverHard:1340997333172617289>", "<:silverHarder:1340997345768247398>", "<:silverInsane:1340997361803202663>",
+                    "<:silverEasyDemon:1340997374319005766>", "<:silverMediumDemon:1340997391691808778>", "<:silverDemon:1340997409005768725>", "<:silverInsaneDemon:1340997422096187464>",
+                    "<:silverExtremeDemon:1340997436251963412>", "<:silverGrandpaDemon:1340997447287046174>"]
+gold_item_emojis = ["<:kirbo_gold:1340999492861952021>", "<:kirbo_green_gold:1340999508238139432>", "<:kirbo_pink_gold:1340999521118720000>", "<:Easy_gold:1340999534825963544>",
+                    "<:Normal_gold:1340999547882704896>", "<:Hard_gold:1340999561552072764>", "<:Harder_gold:1340999574839623681>", "<:Insane_gold:1340999589011914813>",
+                    "<:EasyDemon_gold:1340999605910765599>", "<:MediumDemon_gold:1340999622776328234>", "<:Demon_gold:1340999637636616254>", "<:InsaneDemon_gold:1340999654741118976>",
+                    "<:ExtremeDemon_gold:1340999666568921108>", "<:GrandpaDemon_gold:1340999679734710342>"]
+ultra_item_emojis = ["<:kirbo_ultra:1341002020831760394>", "<:kirbo_green_ultra:1341002034714902590>", "<:kirbo_pink_ultra:1341002049466404904>", "<:Easy_ultra:1341002063496085596>",
+                     "<:Normal_ultra:1341002076968452198>", "<:Hard_ultra:1341002090280910849>", "<:Harder_ultra:1341002104298410004>", "<:Insane_ultra:1341002118105927690>",
+                     "<:EasyDemon_ultra:1341002130810605619>", "<:MediumDemon_ultra:1341002143666016286>", "<:Demon_ultra:1341002156810965032>", "<:InsaneDemon_ultra:1341002171604537365>",
+                     "<:ExtremeDemon_ultra:1341002183897911417>", "<:GrandpaDemon_ultra:1341002197319815233>"]
+cluster_emojis = ["", "<:x2:1341003077804757022>", "<:x3:1341003090827939892>", "<:x4:1341003105780895804>", "<:x5:1341003120058171433>"]

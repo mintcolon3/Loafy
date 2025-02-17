@@ -114,7 +114,7 @@ async def on_message(message):
         if random.randint(1, 5) == 1:
             await message.channel.send(':0 loafy lore')
     
-    if message.channel.id == 1216797203557781514 and random.randint(1, 20) == 1:
+    if message.channel.id == 1216797203557781514 and random.randint(1, 10) == 1:
         await message.add_reaction("<:meow_boop:1264461237597638758>")
 
 
