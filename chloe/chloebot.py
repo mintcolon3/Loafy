@@ -29,16 +29,18 @@ user_kirbo = load()
 time = datetime.time(hour=23, minute=00, tzinfo=datetime.timezone.utc)
 
 async def daily(self, reason):
-    user_kirbo = load()
+    global user_kirbo
     for key, value in user_kirbo.items():
+        print(key)
         user_kirbo[key][1] += 10 + user_kirbo[key][2]
         if user_kirbo[key][1] > 7 * (10 + user_kirbo[key][2]):
             user_kirbo[key][1] = 7 * (10 + user_kirbo[key][2])
+        print(user_kirbo[key][1])
     save(user_kirbo)
     await printlog(self, input=f"\nstored kirbo rolls have increased\nreason: {reason}\n")
     channel = discord.utils.get(self.bot.get_all_channels(), id=1254482628917203127)
     achannel = discord.utils.get(self.bot.get_all_channels(), id=1254105197547094128)
-    await channel.send("<@&1323571811266461716>\nDaily rolls have been reset.")
+    await channel.send("Daily rolls have been reset.")
 
 
 class chloe(commands.Cog):
@@ -69,7 +71,7 @@ class chloe(commands.Cog):
 
     @kirbo.command(brief="kirbo")
     async def roll(self, ctx, loop: int = 1):
-        user_kirbo = load() # gets user kirbo data
+        global user_kirbo # gets user kirbo data
         user_id = str(ctx.author.id)
         user_kirbo.setdefault(user_id, df) # sets the default for if the user hasnt rolled before
 
@@ -149,7 +151,7 @@ class chloe(commands.Cog):
 
     @kirbo.command(brief="kirbo", help="run c!kirbo shop to view items.", aliases=["market"])
     async def shop(self, ctx):
-        user_kirbo = load()
+        global user_kirbo
         user_id = str(ctx.author.id)
         user_kirbo.setdefault(user_id, df)
 
@@ -184,7 +186,7 @@ class chloe(commands.Cog):
 
     @kirbo.command(brief="kirbo")
     async def buy(self, ctx, amount: typing.Optional[int], *, item: str):
-        user_kirbo = load()
+        global user_kirbo
         user_id = str(ctx.author.id)
         user_kirbo.setdefault(user_id, df)
 
@@ -265,8 +267,7 @@ class chloe(commands.Cog):
 
         sorted_data = sorted(
             user_kirbo.items(),
-            key=lambda item: item[1][leaderboards[name][0]]*(-1),
-            reverse=True)
+            key=lambda item: item[1][leaderboards[name][0]]*(-1))
         top = sorted_data[:10]
 
         reply = "0.‎ **kirbo:** ∞\n"
@@ -305,7 +306,7 @@ class chloe(commands.Cog):
     @kirbo.command(hidden=True)
     async def uroll(self, ctx, user_id: str):
         await private.cowner(ctx)
-        user_kirbo = load()
+        global user_kirbo
         user_id = str(ctx.author.id)
         user_kirbo.setdefault(user_id, df)
 
@@ -330,7 +331,7 @@ class chloe(commands.Cog):
     
     @hidden.command(name="shop", brief="list of items available in the hidden market")
     async def hshop(self, ctx):
-        user_kirbo = load()
+        global user_kirbo
         user_id = str(ctx.author.id)
 
         qual_upgrade_prices = ["300 kirbos", "200 silver", "200 gold"]
@@ -355,7 +356,7 @@ class chloe(commands.Cog):
     
     @hidden.command(name="buy", brief="hidden market")
     async def hbuy(self, ctx, *, item: str):
-        user_kirbo = load()
+        global user_kirbo
         user_id = str(ctx.author.id)
         item = item.lower()
         lower = None
@@ -421,7 +422,7 @@ class chloe(commands.Cog):
                     silver grandpa demon + 500 kirbos -> 10 silver [recipe 1]
                     (10x) silver grandpa demon + 8000 kirbos -> 1 pure kirbo [recipe 2]""")
     async def refine(self, ctx, recipe: typing.Optional[int], *, item: str):
-        user_kirbo = load()
+        global user_kirbo
         user_id = str(ctx.author.id)
 
         qualities = ["silver", "gold", "ultra"]

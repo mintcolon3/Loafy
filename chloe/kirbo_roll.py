@@ -35,7 +35,6 @@ def kirbo_roll(loop, kirbo):
     print(converters, c, dc, gc, item_chances)
 
     for i in range(loop): # getting the items for each roll
-        print(":3")
         cluster = cluster_names.index(random.choices(cluster_names, weights=cluster_chances[kirbo[7][2]])[0]) if kirbo[7][2] > 0 else 0
         quality = upgrade_names.index(random.choices(upgrade_names, weights=upgrade_chances[kirbo[7][1]])[0]) if kirbo[7][1] > 0 else 0
         item = item_names.index(random.choices(population=item_names, weights=item_chances)[0])
