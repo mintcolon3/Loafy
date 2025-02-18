@@ -1,5 +1,6 @@
 import discord
 import random
+import math
 import emojis
 from discord.ext import commands
 
@@ -32,18 +33,16 @@ def kirbo_roll(loop, kirbo):
     rolled_item_emojis = ["# "] # the store of the emojis of all the items rolled
     total_value = 0 # the total kirbos earned
 
-    print(converters, c, dc, gc, item_chances)
-
     for i in range(loop): # getting the items for each roll
-        cluster = cluster_names.index(random.choices(cluster_names, weights=cluster_chances[kirbo[7][2]])[0]) if kirbo[7][2] > 0 else 0
-        quality = upgrade_names.index(random.choices(upgrade_names, weights=upgrade_chances[kirbo[7][1]])[0]) if kirbo[7][1] > 0 else 0
+        cluster = cluster_names.index(random.choices(cluster_names, weights=cluster_chances[kirbo[7][2]])[0])
+        quality = upgrade_names.index(random.choices(upgrade_names, weights=upgrade_chances[kirbo[7][1]])[0])
         item = item_names.index(random.choices(population=item_names, weights=item_chances)[0])
 
         rolled_items.append(f"{cluster_names[cluster]}{upgrade_names[quality]}{item_names[item]}")
         item_count[quality][item] += cluster_values[cluster]
         rolled_item_emojis.append(item_emojis[quality][item])
         rolled_item_emojis.append(cluster_emojis[cluster])
-        total_value += item_values[item] * upgrade_values[quality] * cluster_values[cluster]
+        total_value += math.ceil(item_values[item] * upgrade_values[quality] * cluster_values[cluster])
     
     reply_message = "".join(rolled_item_emojis) # getting the emojis to reply with
     reply = discord.Embed(description=reply_message, color=0xffd057) # creating the embed for the reply

@@ -7,6 +7,7 @@ import json
 import private_commands
 import asyncio
 import typing
+import emojis
 from chloe.kirbo_roll import kirbo_roll
 from discord.ext import commands, tasks
 from private import kdefault as df
@@ -112,16 +113,13 @@ class chloe(commands.Cog):
             return reply
 
         main_reply = f"""
-            {username} has **{kirbo[0]}** kirbos.
-            {f'{username} has **{kirbo[6][0]}** silver.' if al2_check else '..'}
-            {f'{username} has **{kirbo[6][1]}** gold.' if al2_check else '..'}
-            {f'{username} has **{kirbo[6][2]}** pure kirbo.' if al2_check else '..'}
+            {username} has **{kirbo[0]}** {emojis.currency_emojis[0]}{f', **{kirbo[6][0]}** {emojis.currency_emojis[1]}, **{kirbo[6][1]}** {emojis.currency_emojis[2]}, **{kirbo[6][2]}** {emojis.currency_emojis[3]}' if al2_check else ''}
             {username} has **{kirbo[3]}** kirbo converters.
             {username} has **{kirbo[2] + 10}** daily rolls. (**{kirbo[2]}** extra daily rolls)
 
-            {f'{username} has increased the extra daily roll cap {kirbo[7][0]} times.' if al2_check else '..'}
-            {f'{username} has upgraded item quality {kirbo[7][1]} times.' if al2_check else '..'}
-            {f'{username} has researched clusters {kirbo[7][2]} times.' if al2_check else '..'}
+            {f'{username} has increased the extra daily roll cap **{kirbo[7][0]}** times.' if al2_check else '..'}
+            {f'{username} has upgraded item quality **{kirbo[7][1]}** times.' if al2_check else '..'}
+            {f'{username} has researched clusters **{kirbo[7][2]}** times.' if al2_check else '..'}
             
             {username} has rolled **{kirbo[4]}** kirbos in total.
 
@@ -410,7 +408,7 @@ class chloe(commands.Cog):
 
         save(user_kirbo)
     
-    @hidden.command(brief="refine items into silver, gold or pure kirbo. list of recipes on full help menu",
+    @hidden.command(brief="refine items. list of recipes on full help menu",
                     help="""
                     recipes:
 
@@ -420,7 +418,22 @@ class chloe(commands.Cog):
                     silver (easy/medium/hard) demon + 400 kirbos -> 4 silver
                     silver (insane/extreme) demon + 450 kirbos -> 5 silver
                     silver grandpa demon + 500 kirbos -> 10 silver [recipe 1]
-                    (10x) silver grandpa demon + 8000 kirbos -> 1 pure kirbo [recipe 2]""")
+                    (10x) silver grandpa demon + 8000 kirbos -> 1 pure kirbo [recipe 2]
+                    
+                    gold (kirbo/green kirbo/pink kirbo) + 400 kirbos -> 1 gold
+                    gold (easy/normal/hard) + 600 kirbos -> 2 gold
+                    gold (harder/insane) + 700 kirbos -> 3 gold
+                    gold (easy/medium/hard) demon + 800 kirbos -> 4 gold
+                    gold (insane/extreme) demon + 900 kirbos -> 5 gold
+                    gold grandpa demon + 1000 kirbos -> 10 gold [recipe 1]
+                    (5x) gold grandpa demon + 8000 kirbos -> 1 pure kirbo [recipe 2]
+                    
+                    ultra (kirbo/green kirbo/pink kirbo) + 2000 kirbos -> 1 pure kirbo
+                    ultra (easy/normal/hard) + 3000 kirbos -> 2 pure kirbo
+                    ultra (harder/insane) + 3500 kirbos -> 3 pure kirbo
+                    ultra (easy/medium/hard) demon + 4000 kirbos -> 4 pure kirbo
+                    ultra (insane/extreme) demon + 4500 kirbos -> 5 pure kirbo
+                    ultra grandpa demon + 5000 kirbos -> 10 pure kirbo""")
     async def refine(self, ctx, recipe: typing.Optional[int], *, item: str):
         global user_kirbo
         user_id = str(ctx.author.id)
@@ -470,6 +483,14 @@ class chloe(commands.Cog):
         user_kirbo[user_id][8][qualities.index(quality)][items.index(item)] += -(recipes[full_name][recipe][2])
         user_kirbo[user_id][6][["s", "g", "p"].index(recipes[full_name][recipe][0][0])] += recipes[full_name][recipe][0][1:]
 
-        reply = f"You have refined {recipes[full_name][recipe][2]} {quality} {item} into {recipes[full_name][recipe][0][1:]} {['silver', 'gold', 'pure kirbo'][['s', 'g', 'p'].index(recipes[full_name][recipe][0][0])]}."
+        reply = "You have refined {} {} and {} {} into {} {}."
+        reply = reply.format(
+            recipes[full_name][recipe][2],
+            emojis.all_item_emojis[qualities.index(quality)+1][items.index(item)],
+            recipes[full_name][recipe][1],
+            emojis.currency_emojis[0],
+            recipes[full_name][recipe][0][1:],
+            emojis.currency_emojis[['s', 'g', 'p'].index(recipes[full_name][recipe][0][0])+1])
+        
         reply_embed = discord.Embed(description=reply, color=0x725628)
         await ctx.reply(embed=reply_embed)
