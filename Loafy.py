@@ -18,6 +18,7 @@ intents.members = True
 bot = commands.Bot(command_prefix=('^', 'c!'), intents=intents)
 
 user_butter = loadbutter()
+counting = {}
 
 async def check_roles(guild):
     purpl = discord.utils.get(guild.roles, name="purpl")
@@ -28,7 +29,7 @@ async def check_roles(guild):
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}\n')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name="eepyness"), status=discord.Status.online)
+    await bot.change_presence(activity=discord.CustomActivity(name="im eepy :3"), status=discord.Status.online)
 
     for guild in bot.guilds:
         bot.tree.clear_commands(guild=guild, type=discord.AppCommandType.chat_input)
@@ -117,6 +118,26 @@ async def on_message(message):
     if message.channel.id == 1216797203557781514 and random.randint(1, 10) == 1:
         await message.add_reaction("<:meow_boop:1264461237597638758>")
 
+    if message.content.startswith(":") and not message.content.endswith(":"):
+        global counting
+        correct = 0
+        int_values = "1234567890".split()
+
+        for v in message.content.split()[1:]: correct += 1 if v not in int_values else 0
+
+        if correct == 0:
+            if int(message.channel.id) in counting.keys() and counting[message.channel.id][0] != 0 and counting[message.channel.id][1] != message.author.id:
+                if int(message.content[1:]) == counting[message.channel.id][0]+1:
+                    await message.add_reaction("✅")
+                    counting[message.channel.id] = [int(message.content[1:]), message.author.id]
+                else:
+                    await butter_commands.jam(message, message.author, 1)
+                    counting[message.channel.id] = [0, 0]
+            elif int(message.channel.id) not in counting.keys() or counting[message.channel.id][0] == 0:
+                if int(message.content[1:]) in [1, 3]:
+                    await message.add_reaction("✅")
+                    counting[message.channel.id] = [int(message.content[1:]), message.author.id]
+
 
     await bot.process_commands(message)
 
@@ -152,5 +173,17 @@ async def load(ctx):
     await bot.add_cog(butter_commands.buttr(bot=bot))
     await bot.add_cog(chloe_commands.chloe(bot=bot))
     await ctx.reply("cogs loaded.")
+
+@bot.command()
+@commands.has_permissions(administrator=True)
+async def count(ctx, arg, id: int = 0):
+    global counting
+    if arg == "dump":
+        channel = discord.utils.get(bot.get_all_channels(), id=1261742559668207636)
+        print(counting)
+        await channel.send(f"```{counting}```")
+    elif arg == "load":
+        message = await ctx.fetch_message(id)
+        counting = eval(message.content.replace("```", ""))
 
 bot.run(private.TOKEN)

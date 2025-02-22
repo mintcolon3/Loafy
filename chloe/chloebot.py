@@ -17,6 +17,12 @@ async def printlog(self, input):
     print(input)
     await channel.send(f"```{input}```")
 
+def testing_check(ctx):
+    return ctx.message.channel.id == 1254103035182059622
+
+def cprefix(ctx):
+    return ctx.prefix == 'c!'
+
 def load():
     file = open('chloe\kirbo.json')
     filedata = json.load(file)
@@ -41,7 +47,7 @@ async def daily(self, reason):
     await printlog(self, input=f"\nstored kirbo rolls have increased\nreason: {reason}\n")
     channel = discord.utils.get(self.bot.get_all_channels(), id=1254482628917203127)
     achannel = discord.utils.get(self.bot.get_all_channels(), id=1254105197547094128)
-    await channel.send("Daily rolls have been reset.")
+    await channel.send("<@&1323571811266461716>\nDaily rolls have been reset.")
 
 
 class chloe(commands.Cog):
@@ -67,8 +73,9 @@ class chloe(commands.Cog):
             await channel.send(embed=reply_embed)
     
     @commands.group(name="c!kirbo", brief="kirbo", aliases=["kirbo", "killbot"])
+    @commands.check(cprefix)
     async def kirbo(self, ctx):
-        await private.cprefix(ctx)
+        return
 
     @kirbo.command(brief="kirbo")
     async def roll(self, ctx, loop: int = 1):
@@ -106,10 +113,11 @@ class chloe(commands.Cog):
         al2_check = al2_role in user.roles
 
         def c(v):
-            reply = ""
+            reply = f"{kirbo[5][v]}"
             reply += f", {kirbo[8][0][v]}s" if kirbo[8][0][v] > 0 else ""
             reply += f", {kirbo[8][1][v]}g" if kirbo[8][1][v] > 0 else ""
-            reply += f", {kirbo[8][2][v]}pk" if kirbo[8][2][v] > 0 else ""
+            reply += f", {kirbo[8][2][v]}u" if kirbo[8][2][v] > 0 else ""
+            reply += f", {kirbo[8][3][v]}p ({kirbo[9][v]}r)" if kirbo[8][3][v] > 0 else ""
             return reply
 
         main_reply = f"""
@@ -125,21 +133,21 @@ class chloe(commands.Cog):
 
             {username} can roll **{kirbo[1]}** more times today.""".replace("\n            ..", "")
         items_reply1 = f"""
-            **{kirbo[5][0]}{c(0)}** <:kirbo:1314946641836511355>
-            **{kirbo[5][1]}{c(1)}** <:kirbo_green:1314946640410574899>
-            **{kirbo[5][2]}{c(2)}** <:kirbo_pink:1314946638749634563>
-            **{kirbo[5][3]}{c(3)}** <:Easy:1314949853838577725>
-            **{kirbo[5][4]}{c(4)}** <:Normal:1314949896150716447>
-            **{kirbo[5][5]}{c(5)}** <:Hard:1314949924412194816>
-            **{kirbo[5][6]}{c(6)}** <:Harder:1314949962576039978>"""
+            **{c(0)}** <:kirbo:1314946641836511355>
+            **{c(1)}** <:kirbo_green:1314946640410574899>
+            **{c(2)}** <:kirbo_pink:1314946638749634563>
+            **{c(3)}** <:Easy:1314949853838577725>
+            **{c(4)}** <:Normal:1314949896150716447>
+            **{c(5)}** <:Hard:1314949924412194816>
+            **{c(6)}** <:Harder:1314949962576039978>"""
         items_reply2 = f"""
-            **{kirbo[5][7]}{c(7)}** <:Insane:1314950004309491773>
-            **{kirbo[5][8]}{c(8)}** <:EasyDemon:1314950046445342800>
-            **{kirbo[5][9]}{c(9)}** <:MediumDemon:1314950112132206684>
-            **{kirbo[5][10]}{c(10)}** <:HardDemon:1314950166415147069>
-            **{kirbo[5][11]}{c(11)}** <:InsaneDemon:1314950220634656918>
-            **{kirbo[5][12]}{c(12)}** <:ExtremeDemon:1314950243728621649>
-            **{kirbo[5][13]}{c(13)}** <:GrandpaDemon:1314950272887554069>"""
+            **{c(7)}** <:Insane:1314950004309491773>
+            **{c(8)}** <:EasyDemon:1314950046445342800>
+            **{c(9)}** <:MediumDemon:1314950112132206684>
+            **{c(10)}** <:HardDemon:1314950166415147069>
+            **{c(11)}** <:InsaneDemon:1314950220634656918>
+            **{c(12)}** <:ExtremeDemon:1314950243728621649>
+            **{c(13)}** <:GrandpaDemon:1314950272887554069>"""
         
         if page.lower() in ["all", "main"]: reply_embed.add_field(name=f"stats for {username}:", value=main_reply)
         if page.lower() in ["all", "items"]:
@@ -157,10 +165,10 @@ class chloe(commands.Cog):
         if user_kirbo[user_id][3] == 20 and al2_role not in ctx.author.roles:
             reply = f"""
             Welcome to the Kirbo Market.
-            You have **{user_kirbo[user_id]["al1"][0]}** kirbos to spend.
+            You have **{user_kirbo[user_id][0]}** kirbos to spend.
             Buy items with `c!kirbo buy <amount> <item>`.
 
-            **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id]["al1"][2]})
+            **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{50 + user_kirbo[user_id][6][0]*20})
             Increases the amount of rolls you can make  every day by 1.
 
             **???** - 5000 kirbos
@@ -174,7 +182,7 @@ class chloe(commands.Cog):
         You have **{user_kirbo[user_id][0]}** kirbos to spend.
         Buy items with `c!kirbo buy <item>` or `c!kirbo buy <amount> <item>`.
 
-        **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/50)
+        **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{50 + user_kirbo[user_id][6][0]*20})
         Increases the amount of rolls you can make  every day by 1.
         
         **Kirbo converter (*alias: converter*)** - {int(150*(1.2**user_kirbo[user_id][3]))} kirbos ({user_kirbo[user_id][3]}/20)
@@ -291,7 +299,65 @@ class chloe(commands.Cog):
         reply_embed = discord.Embed(color=0xffd057)
         reply_embed.add_field(name="", value=f"You have **{kirbo[1]}** rolls remaining.")
         await ctx.reply(embed=reply_embed)
+    
+    '''@kirbo.command(brief="kirbo")
+    @commands.check(testing_check)
+    async def gift(self, ctx, user: discord.user, amount: int, *, item: str):
+        print("c")
+        global user_kirbo
+        user_id = str(ctx.author.id)
+        user_kirbo.setdefault(user_id, df)
+        print("b")
+        if item.lower() == "disable":
+            user_kirbo[user_id][10] = False
+            reply_embed = discord.Embed(color=0xffd057, description=f"gifting disabled, run `c!kirbo gift <@{user_id}> 1 enable` to enable gifting.")
+            await ctx.reply(embed=reply_embed)
+            save(user_kirbo)
+            return
+        elif item.lower() == "enable":
+            user_kirbo[user_id][10] = True
+            reply_embed = discord.Embed(color=0xffd057, description=f"gifting enable, run `c!kirbo gift <@{user_id}> 1 disable` to disable gifting.")
+            await ctx.reply(embed=reply_embed)
+            save(user_kirbo)
+            return
+        print("a")
 
+        if amount == None: amount = 1
+
+        al2_role = discord.utils.get(ctx.guild.roles, id=1336377462656995509)
+        items = ["kirbo", "silver", "gold", "pure kirbo"]
+        author_items = [user_kirbo[user_id][0], user_kirbo[user_id][6][0], user_kirbo[user_id][6][1], user_kirbo[user_id][6][2]]
+        if item not in items:
+            reply_embed = discord.Embed(color=0xffd057, description="you cannot gift that item.")
+            await ctx.reply(embed=reply_embed)
+            return
+        if str(user.id) not in user_kirbo:
+            reply_embed = discord.Embed(color=0xffd057, description="that user is not in the kirbo game.")
+            await ctx.reply(embed=reply_embed)
+            return
+        if user_kirbo[str(user.id)][10] == False:
+            reply_embed = discord.Embed(color=0xffd057, description="that user does not accept gifting.")
+            await ctx.reply(embed=reply_embed)
+            return
+        if author_items[items.index(item.lower)] < amount:
+            reply_embed = discord.Embed(color=0xffd057, description="you do not have enough of that item.")
+            await ctx.reply(embed=reply_embed)
+            return
+        if items.index(item.lower()) > 0 and al2_role not in user.roles:
+            reply_embed = discord.Embed(color=0xffd057, description="you cannot gift an access level 2 item to a user in access level 1.")
+            await ctx.reply(embed=reply_embed)
+            return
+        
+        if items.index(item.lower()) == 0:
+            user_kirbo[user_id][0] += -(amount)
+            user_kirbo[str(user.id)][0] += amount
+        else:
+            user_kirbo[user_id][6][items.index(item.lower())-1] += -(amount)
+            user_kirbo[str(user.id)][6][items.index(item.lower())-1] += amount
+        
+        save(user_kirbo)
+        reply_embed = discord.Embed(color=0xffd057, description=f"you have gifted {amount} {item} to {user.name}.")
+        await ctx.reply(embed=reply_embed)''' # broken and im not going to fix >:3
 
     @kirbo.command(hidden=True)
     async def reset(self, ctx, full: bool = False):
@@ -322,16 +388,18 @@ class chloe(commands.Cog):
     # ----------------------------------------------
 
 
-    @commands.group(name="c!hidden", aliases=["hidden", "hkirbo", "hidden_kirbo"])
+    @commands.group(name="c!hidden", brief="access level 2", aliases=["hidden", "hkirbo", "hidden_kirbo"])
+    @commands.check(cprefix)
     @commands.has_role(1336377462656995509)
     async def hidden(self, ctx):
-        await private.cprefix(ctx)
+        return
     
     @hidden.command(name="shop", brief="list of items available in the hidden market")
     async def hshop(self, ctx):
         global user_kirbo
         user_id = str(ctx.author.id)
 
+        al3_role = discord.utils.get(ctx.guild.roles, id=1341498420338229360)
         qual_upgrade_prices = ["300 kirbos", "200 silver", "200 gold"]
         qual_upgrade_features = ["silver", "gold", "ultra"]
         cluster_prices = [300, 600, 900, 1200, 1500, 1800, 2100, 2500]
@@ -342,12 +410,14 @@ class chloe(commands.Cog):
         
         **Daily roll cap increase (*alias: cap*)** - {200+100*user_kirbo[user_id][7][0]} kirbos ({user_kirbo[user_id][7][0]}/5)
         Increases the cap of how many extra daily rolls you can buy by 20.
-        
-        **Quality upgrade {user_kirbo[user_id][7][1]+1} (*alias: upgrade*)** - {qual_upgrade_prices[user_kirbo[user_id][7][1]]}
+
+        **Quality upgrade {user_kirbo[user_id][7][1]+1} (*alias: upgrade*)** - {qual_upgrade_prices[user_kirbo[user_id][7][1]]} ({user_kirbo[user_id][7][1]}/3)
         Allows you to roll {qual_upgrade_features[user_kirbo[user_id][7][1]]} quality items.
-        
-        **Cluster research {user_kirbo[user_id][7][2]+1} (*alias: cluster*)** - {cluster_prices[user_kirbo[user_id][7][2]]} kirbos
+
+        **Cluster research {user_kirbo[user_id][7][2]+1} (*alias: cluster*)** - {cluster_prices[user_kirbo[user_id][7][2]]} kirbos ({user_kirbo[user_id][7][2]}/8)
         Allows you to roll multiple items in one roll."""
+
+        if user_kirbo[user_id][7][1] == 3 and al3_role not in ctx.author.roles: reply = "\n\n**???** - 20 pure kirbo\n?????????????????????????????"
 
         reply_embed = discord.Embed(description=reply, color=0x725628)
         await ctx.reply(embed=reply_embed)
@@ -358,6 +428,7 @@ class chloe(commands.Cog):
         user_id = str(ctx.author.id)
         item = item.lower()
         lower = None
+        al3_role = discord.utils.get(ctx.guild.roles, id=1341498420338229360)
 
         if item in ["daily roll cap increase", "roll cap increase", "daily roll cap", "roll cap", "daily cap", "cap"]:
             if user_kirbo[user_id][0] < 200+100*user_kirbo[user_id][7][0]: lower = "kirbos"
@@ -399,6 +470,14 @@ class chloe(commands.Cog):
                 user_kirbo[user_id][7][2] += 1
                 reply_embed = discord.Embed(description=f"You have bought cluster research {owned+1}.", color=0x725628)
                 await ctx.reply(embed=reply_embed)
+                return
+        elif item == "???" and user_kirbo[7][1] == 3 and al3_role not in ctx.author.roles:
+            if user_kirbo[user_id][6][2] < 20: lower = "pure kirbo"
+            else:
+                printlog(self, f"{ctx.author.name} has upgraded to access level 3.")
+                await ctx.author.send("Thanks for buying ????????????????? again <:shock:1269669317381722114>\n\ntry running `c!help research` in the kirbuttr channel.")
+                await ctx.author.add_roles(al3_role)
+                user_kirbo[user_id]["al1"][6][2] += -20
                 return
         
         if lower != None:
@@ -493,4 +572,63 @@ class chloe(commands.Cog):
             emojis.currency_emojis[['s', 'g', 'p'].index(recipes[full_name][recipe][0][0])+1])
         
         reply_embed = discord.Embed(description=reply, color=0x725628)
+        await ctx.reply(embed=reply_embed)
+
+
+
+
+    # ----------------------------------------------
+    # -------- LABORATORY (ACCESS LEVEL 3) ---------
+    # ----------------------------------------------
+
+
+    @commands.command(name="c!research", brief="access level 3", aliases=["laboratory", "lab", "kirbo_lab", "research"],
+                    help="""
+                    (same item names from refining)
+
+                    20x item
+                    + 10x silver item
+                    + 5x gold item
+                    + ultra item
+                    + 3*(item pure kirbo value from refining) pure kirbo
+                    ->
+                    +1 research into item (max 5 research for each item)""")
+    @commands.check(cprefix)
+    @commands.has_role(1341498420338229360)
+    async def research(self, ctx, item):
+        global user_kirbo
+        user_id = str(ctx.author.id)
+        item_names = [
+            "kirbo", "green kirbo", "pink kirbo",
+            "easy", "normal", "hard", "harder", "insane",
+            "easy demon", "medium demon", "hard demon", "insane demon", "extreme demon",
+            "grandpa demon"]
+        pk_values = [1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 5, 10]
+        item_index = item_names.index(item.lower())
+
+        if user_kirbo[user_id][9][item_index] == 5:
+            reply_embed = discord.Embed(description=f"You have max research for this item.", color=0x463700)
+            await ctx.reply(embed=reply_embed)
+            return
+
+        lower = None
+        if user_kirbo[user_id][5][item_index] < 20: lower = item
+        elif user_kirbo[user_id][8][0][item_index] < 10: lower = f"silver {item}"
+        elif user_kirbo[user_id][8][1][item_index] < 5: lower = f"gold {item}"
+        elif user_kirbo[user_id][8][0][item_index] < 1: lower = f"ultra {item}"
+        elif user_kirbo[user_id][6][2] < 3*pk_values[item_index]: lower = "pure kirbo"
+
+        if lower != None:
+            reply_embed = discord.Embed(description=f"You do not have emough {lower} to research this item.", color=0x463700)
+            await ctx.reply(embed=reply_embed)
+            return
+        
+        user_kirbo[user_id][5][item_index] += -20
+        user_kirbo[user_id][8][0][item_index] += -10
+        user_kirbo[user_id][8][1][item_index] += -5
+        user_kirbo[user_id][8][0][item_index] += -1
+        user_kirbo[user_id][6][2] += -(3*pk_values[item_index])
+        user_kirbo[user_id][9][item_index] += 1
+
+        reply_embed = discord.Embed(description=f"You have researched {item}.", color=0x463700)
         await ctx.reply(embed=reply_embed)
