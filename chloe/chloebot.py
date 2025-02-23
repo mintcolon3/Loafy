@@ -47,7 +47,9 @@ async def daily(self, reason):
     await printlog(self, input=f"\nstored kirbo rolls have increased\nreason: {reason}\n")
     channel = discord.utils.get(self.bot.get_all_channels(), id=1254482628917203127)
     achannel = discord.utils.get(self.bot.get_all_channels(), id=1254105197547094128)
-    await channel.send("<@&1323571811266461716>\nDaily rolls have been reset.")
+    reply_embed = discord.Embed(color=0xffd057, description="<@&1323571811266461716>\nDaily rolls have been reset.")
+    reply_embed.set_footer(text="get pinged for kirbo roll resets by adding the kirbo addict role in <id:customize>")
+    await channel.send(embed=reply_embed)
 
 
 class chloe(commands.Cog):

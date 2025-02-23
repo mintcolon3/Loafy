@@ -38,7 +38,7 @@ def kirbo_roll(loop, kirbo):
         item = item_names.index(random.choices(population=item_names, weights=item_chances)[0])
         cluster = cluster_names.index(random.choices(cluster_names, weights=cluster_chances[kirbo[7][2]])[0])
 
-        item_upgrade_chances = upgrade_chances[kirbo[7][1]]
+        item_upgrade_chances = upgrade_chances[kirbo[7][1]][:]
         item_upgrade_chances.append(pure_item_chances[kirbo[9][item]])
         quality = upgrade_names.index(random.choices(upgrade_names, weights=item_upgrade_chances)[0])
 
