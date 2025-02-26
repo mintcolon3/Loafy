@@ -5,7 +5,7 @@ import emojis
 from discord.ext import commands
 
 def kirbo_roll(loop, kirbo):
-    converters = [kirbo[3]+1, kirbo[3]*1.5+1, kirbo[3]*2+1] # chances affected by kirbo converters
+    converters = [kirbo[3]+1, kirbo[3]*1.8+1, kirbo[3]*2.5+1] # chances affected by kirbo converters
     c, dc, gc = converters[0], converters[1], converters[2]
 
     cluster_chances = [[100, 0, 0, 0, 0], [92, 8, 0, 0, 0], [80, 15, 5, 0, 0], [70, 20, 8, 2, 0], [60, 25, 10, 5, 0],

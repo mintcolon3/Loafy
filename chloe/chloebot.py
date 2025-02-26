@@ -47,9 +47,7 @@ async def daily(self, reason):
     await printlog(self, input=f"\nstored kirbo rolls have increased\nreason: {reason}\n")
     channel = discord.utils.get(self.bot.get_all_channels(), id=1254482628917203127)
     achannel = discord.utils.get(self.bot.get_all_channels(), id=1254105197547094128)
-    reply_embed = discord.Embed(color=0xffd057, description="<@&1323571811266461716>\nDaily rolls have been reset.")
-    reply_embed.set_footer(text="get pinged for kirbo roll resets by adding the kirbo addict role in <id:customize>")
-    await channel.send(embed=reply_embed)
+    await channel.send("<@&1323571811266461716>\nDaily rolls have been reset.\n\nget pinged for kirbo roll resets by adding the kirbo addict role in <id:customize>")
 
 
 class chloe(commands.Cog):
@@ -84,6 +82,11 @@ class chloe(commands.Cog):
         global user_kirbo # gets user kirbo data
         user_id = str(ctx.author.id)
         user_kirbo.setdefault(user_id, df) # sets the default for if the user hasnt rolled before
+
+        if not ctx.channel.topic or "l:1" not in ctx.message.channel.topic:
+            reply_embed = discord.Embed(description="you cannot roll kirbos in this channel.", color=0xffd057)
+            await ctx.reply(embed=reply_embed)
+            return
 
         if loop <= 0: # checks if the requested rolls are 0 or less, exits if true
             reply = "<:thinkies_cat:1254100324751249521>"
@@ -170,7 +173,7 @@ class chloe(commands.Cog):
             You have **{user_kirbo[user_id][0]}** kirbos to spend.
             Buy items with `c!kirbo buy <amount> <item>`.
 
-            **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{50 + user_kirbo[user_id][6][0]*20})
+            **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{90 + user_kirbo[user_id][6][0]*20})
             Increases the amount of rolls you can make  every day by 1.
 
             **???** - 5000 kirbos
@@ -184,7 +187,7 @@ class chloe(commands.Cog):
         You have **{user_kirbo[user_id][0]}** kirbos to spend.
         Buy items with `c!kirbo buy <item>` or `c!kirbo buy <amount> <item>`.
 
-        **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{50 + user_kirbo[user_id][6][0]*20})
+        **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{90 + user_kirbo[user_id][6][0]*20})
         Increases the amount of rolls you can make  every day by 1.
         
         **Kirbo converter (*alias: converter*)** - {int(150*(1.2**user_kirbo[user_id][3]))} kirbos ({user_kirbo[user_id][3]}/20)
@@ -232,7 +235,7 @@ class chloe(commands.Cog):
             
             amount = 1
         
-        if item in ["extra daily roll", "roll"] and user_kirbo[user_id][2] + amount > 50 + user_kirbo[user_id][6][0]*20:
+        if item in ["extra daily roll", "roll"] and user_kirbo[user_id][2] + amount > 90 + user_kirbo[user_id][6][0]*20:
             reply = "You have max daily rolls."
             reply_embed = discord.Embed(description=reply, color=0xffd057)
             await ctx.reply(embed=reply_embed)

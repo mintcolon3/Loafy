@@ -117,6 +117,8 @@ async def on_message(message):
     
     if message.channel.id == 1216797203557781514 and random.randint(1, 10) == 1:
         await message.add_reaction("<:meow_boop:1264461237597638758>")
+    elif message.channel.id == 1216797203557781514 and message.author.id == 1295033921750302773 and random.randint(1, 3) == 1:
+        await message.add_reaction("<:meow_boop:1264461237597638758>")
 
     if message.content.startswith(":") and not message.content.endswith(":"):
         global counting
