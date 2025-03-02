@@ -4,7 +4,7 @@ import math
 import emojis
 from discord.ext import commands
 
-def kirbo_roll(loop, kirbo):
+async def kirbo_roll(loop, kirbo, ctx):
     converters = [kirbo[3]+1, kirbo[3]*1.8+1, kirbo[3]*2.5+1] # chances affected by kirbo converters
     c, dc, gc = converters[0], converters[1], converters[2]
 
@@ -31,7 +31,7 @@ def kirbo_roll(loop, kirbo):
 
     rolled_items = [] # the store of all the items rolled
     item_count = [kirbo[5], kirbo[8][0], kirbo[8][1], kirbo[8][2], kirbo[8][3]] # the count of how many of each item were rolled for list of rolled items
-    rolled_item_emojis = ["", "", ""] # the store of the emojis of all the items rolled
+    rolled_item_emojis = ["# "]*10 # the store of the emojis of all the items rolled
     total_value = 0 # the total kirbos earned
 
     for i in range(loop): # getting the items for each roll
@@ -44,15 +44,10 @@ def kirbo_roll(loop, kirbo):
 
         rolled_items.append(f"{cluster_names[cluster]}{upgrade_names[quality]}{item_names[item]}")
         item_count[quality][item] += cluster_values[cluster]
-        rolled_item_emojis[i%3] += item_emojis[quality][item]
-        rolled_item_emojis[i%3] += cluster_emojis[cluster]
+        if i/45 == i//45: print(i//45)
+        rolled_item_emojis[i//45] += item_emojis[quality][item]
+        rolled_item_emojis[i//45] += cluster_emojis[cluster]
         total_value += math.ceil(item_values[item] * upgrade_values[quality] * cluster_values[cluster])
-    
-    reply = discord.Embed(color=0xffd057) # creating the embed for the reply
-    reply.set_footer(text=f"{total_value} kirbos rolled") # adding the footer on the embed
-    reply.add_field(name="‎", value=rolled_item_emojis[0]) # adding the first set of emojis to the embed
-    reply.add_field(name="‎", value=rolled_item_emojis[1]) # adding the second set of emojis to the embed
-    reply.add_field(name="‎", value=rolled_item_emojis[2]) # adding the third set of emojis to the embed
 
     kirbo[0] += total_value # adding rolled kirbos to kirbo store
     kirbo[4] += total_value # adding rolled kirbos to total kirbo store
@@ -63,4 +58,10 @@ def kirbo_roll(loop, kirbo):
     kirbo[8][2] = item_count[3] # setting ultra item count to new value
     kirbo[8][3] = item_count[4] # setting pure item count to new value
 
-    return [kirbo, reply]
+    for i in range(10):
+        if rolled_item_emojis[i] != "# ":
+            reply_embed = discord.Embed(color=0xffd057, description=str(rolled_item_emojis[i])) # creating the embed for the reply
+            reply_embed.set_footer(text=f"{total_value} kirbos rolled") # adding the footer on the embed
+            await ctx.reply(embed=reply_embed)
+
+    return kirbo

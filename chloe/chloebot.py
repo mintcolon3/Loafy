@@ -100,10 +100,8 @@ class chloe(commands.Cog):
             await ctx.reply(embed=reply_embed)
             return
 
-        rolls = kirbo_roll(loop, user_kirbo[user_id]) # rolls kirbos
-        user_kirbo[user_id] = rolls[0] # sets new user kirbo values
-        await ctx.reply(embed=rolls[1]) # replies with embed
-
+        rolls = await kirbo_roll(loop, user_kirbo[user_id], ctx) # rolls kirbos
+        user_kirbo[user_id] = rolls # sets new user kirbo values
         save(user_kirbo) # saves the new user kirbo values
         
     @kirbo.command(brief="kirbo")
