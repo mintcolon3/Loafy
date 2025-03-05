@@ -37,8 +37,9 @@ pure_item_emojis = ["<:kirbo_pure:1342813341160050728>", "<:kirbo_green_pure:134
                     "<:Normal_pure:1341490000101114068>", "<:Hard_pure:1341490035022762085>", "<:Harder_pure:1341490046942843003>", "<:Insane_pure:1341490059349725184>",
                     "<:EasyDemon_pure:1341490071324590090>", "<:MediumDemon_pure:1341490115117056084>", "<:Demon_pure:1341490129575088130>", "<:InsaneDemon_pure:1341490144963985490>",
                     "<:ExtremeDemon_pure:1341490157685051432>", "<:GrandpaDemon_pure:1341490171400683603>"]
+TD_item_emojis = ["<:kirbo_3D:1346900906683142155>", "<:kirbo_green_3D:1346900920969068595>", "<:kirbo_pink_3D:1346900936408432731>"]
 cluster_emojis = ["", "<:x2:1341003077804757022>", "<:x3:1341003090827939892>", "<:x4:1341003105780895804>", "<:x5:1341003120058171433>"]
 
-all_item_emojis = [item_emojis, silver_item_emojis, gold_item_emojis, ultra_item_emojis, pure_item_emojis]
+all_item_emojis = [item_emojis, silver_item_emojis, gold_item_emojis, ultra_item_emojis, pure_item_emojis, TD_item_emojis]
 
 currency_emojis = ["<:kirbo:1341346663930921060>", "<:silver:1341346678300741713>", "<:gold:1341346690547978270>", "<:pure_kirbo:1341346701801422869>"]

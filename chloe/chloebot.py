@@ -121,6 +121,7 @@ class chloe(commands.Cog):
             reply += f", {kirbo[8][1][v]}g" if kirbo[8][1][v] > 0 else ""
             reply += f", {kirbo[8][2][v]}u" if kirbo[8][2][v] > 0 else ""
             reply += f", {kirbo[8][3][v]}p ({kirbo[9][v]}r)" if kirbo[8][3][v] > 0 else ""
+            if  v <= 2: reply += f", {kirbo[8][3][v]}3D" if kirbo[8][4][v] > 0 else ""
             return reply
 
         main_reply = f"""
@@ -188,7 +189,7 @@ class chloe(commands.Cog):
         **Extra daily roll (*alias: roll*)** - 50 kirbos ({user_kirbo[user_id][2]}/{90 + user_kirbo[user_id][6][0]*20})
         Increases the amount of rolls you can make  every day by 1.
         
-        **Kirbo converter (*alias: converter*)** - {int(150*(1.2**user_kirbo[user_id][3]))} kirbos ({user_kirbo[user_id][3]}/20)
+        **Kirbo converter (*alias: converter*)** - {int(150*(1.2**user_kirbo[user_id][3])) if user_kirbo[user_id][3] < 10 else int(145*(1.15**user_kirbo[user_id][3]))} kirbos ({user_kirbo[user_id][3]}/20)
         Increases your chance of rolling a better kirbo."""
         reply_embed = discord.Embed(description=reply, color=0xffd057)
         await ctx.reply(embed=reply_embed)
@@ -216,8 +217,8 @@ class chloe(commands.Cog):
         shop = {
             "extra daily roll" : [50, 2, "extra daily rolls"],
             "roll" : [50, 2, "extra daily rolls"],
-            "kirbo converter" : [int(150*(1.2**user_kirbo[user_id][3])), 3, "kirbo converters"],
-            "converter" : [int(150*(1.2**user_kirbo[user_id][3])), 3, "kirbo converters"],
+            "kirbo converter" : [int(150*(1.2**user_kirbo[user_id][3])) if user_kirbo[user_id][3] < 10 else int(145*(1.15**user_kirbo[user_id][3])), 3, "kirbo converters"],
+            "converter" : [int(150*(1.2**user_kirbo[user_id][3])) if user_kirbo[user_id][3] < 10 else int(145*(1.15**user_kirbo[user_id][3])), 3, "kirbo converters"],
         }
 
         if amount == None: amount = 1
